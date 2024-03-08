@@ -35,7 +35,8 @@ public class ArticleController {
         Article article = form.toEntity();
         Article saved = articleRepository.save(article);
         System.out.println(saved);
-        return "";
+        // 리다이렉트 위치 작성
+        return "redirect:/articles/" + saved.getId();
     }
     @GetMapping("/articles/{id}")
     public String show(@PathVariable Long id, Model model){
@@ -59,5 +60,29 @@ public class ArticleController {
         List<Article> list = articleRepository.findAll();
         model.addAttribute("articleList",list);
         return "articles/index";
+    }
+
+    @GetMapping("/articles/{id}/edit")
+    public String edit(@PathVariable Long id, Model model){
+        Article article = articleRepository.findById(id).orElse(null);
+        System.out.println(model);
+        model.addAttribute("article",article);
+        return "articles/edit";
+    }
+
+    @PostMapping("/articles/update")
+    public String update(ArticleForm form){
+        System.out.println(form);
+        // 1. DTO를 엔티티에 변환
+        // 2. 엔티티를 db에 저장
+        // 3. 수정결과 리다이렉트
+
+        Article article = form.toEntity();
+        Article target = articleRepository.findById(article.getId()).orElse(null);
+        if(target != null){
+            articleRepository.save(target);
+        }
+        System.out.println("result :" + target.toString());
+        return "redirect:/articles/" + target.getId();
     }
 }

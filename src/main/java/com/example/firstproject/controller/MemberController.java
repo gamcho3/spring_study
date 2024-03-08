@@ -32,7 +32,7 @@ public class MemberController {
         Member memberEntity = form.toEntity();
         Member saved = repository.save(memberEntity);
         logger.info(saved.toString());
-        return "";
+        return "redirect:/members/" + saved.getId();
     }
 
     @GetMapping("/members/{id}")
@@ -52,5 +52,29 @@ public class MemberController {
         List<Member> members= (List<Member>) repository.findAll();
         model.addAttribute("members",members);
         return "members/index";
+    }
+
+    @GetMapping("/members/{id}/edit")
+    public String edit(@PathVariable Long id,Model model){
+        System.out.println(id);
+        System.out.println(model);
+        //1. id를 이용하여 엔티티 검색
+        //2. 엔티티를 뷰에 전송
+
+        Member memberEntity = repository.findById(id).orElse(null);
+        model.addAttribute("member",memberEntity);
+        return "members/edit";
+    }
+
+    @PostMapping("/members/update")
+    public String update(MemberForm form){
+        // 1. DTO를 엔티티로 변환
+        // 2. 레포지토리에서 DTO 검색
+        // 3. null 체크후 저장
+        // 4. redirect로 페이지 전환
+        Member memberEntity = form.toEntity();
+        repository.findById(memberEntity.getId()).ifPresent(target -> repository.save(memberEntity));
+
+        return "redirect:/members/" + memberEntity.getId();
     }
 }
