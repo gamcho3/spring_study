@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -84,5 +85,19 @@ public class ArticleController {
         }
         System.out.println("result :" + target.toString());
         return "redirect:/articles/" + target.getId();
+    }
+
+    @GetMapping("/articles/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes rttr){
+        log.info("삭제 요청");
+        Article target = articleRepository.findById(id).orElse(null);
+        if(target != null){
+            articleRepository.delete(target);
+            // 한번 사용돼고 바로 날라가는 데이터
+            rttr.addFlashAttribute("msg","삭제됐습니다.");
+        }
+        log.info(target.toString());
+
+        return "redirect:/articles";
     }
 }
