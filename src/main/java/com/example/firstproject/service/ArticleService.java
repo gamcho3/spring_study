@@ -33,7 +33,6 @@ public class ArticleService {
         Article entity = dto.toEntity();
         Article article = articleRepository.findById(id).orElse(null);
         if(article == null || !id.equals(article.getId())){
-            log.info(article.toString());
             return null;
         }
         article.patch(entity);
